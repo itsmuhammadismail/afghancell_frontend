@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.MuiTableCell-paddingCheckbox,
+button[aria-label="Download CSV"],
+button[aria-label="Print"],
+button[aria-label="Filter Table"] {
+  display: none !important;
+}
+
+@media screen and (min-width: 900px) {
+  .hideIcon {
+    display: none;
+  }
+}
+
+.trans {
+  transition: height 0.5s ease;
+}
