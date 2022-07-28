@@ -61,20 +61,7 @@ const Cards = () => {
         color="#F1416C"
         bgColor="#FFF5F8"
       />
-      <Card
-        name="Total Orders Today"
-        value={totalOrderPerDay}
-        icon={<ShoppingCartIcon />}
-        color="#647489"
-        bgColor="#E2E8F0"
-      />
-      <Card
-        name="Total Spent Today"
-        value={totalCreditPerDay}
-        icon={<AccountBalanceWalletIcon />}
-        color="#F5A61D"
-        bgColor="#FFF6E6"
-      />
+      
     </div>
   );
 };

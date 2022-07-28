@@ -96,6 +96,7 @@ const Login = () => {
           {errors.username && (
             <span className="text-xs text-red-600">Username is required</span>
           )}
+          <div className="h-[1rem]"></div>
           <TextField
             id="outlined-basic"
             label="Password"

@@ -6,8 +6,6 @@ import { useCookies } from "react-cookie";
 import { useEffect, useState } from "react";
 import getOrderHistoryApi from "../api/get_order_history";
 import { CircularProgress } from "@mui/material";
-import getPendingOrderApi from "../api/get_pending_order";
-import OrderActionApi from "../api/order_action";
 
 const columns = [
   "Sr.No",
@@ -19,7 +17,7 @@ const columns = [
   "Amount",
   "Date of Txn",
   "State",
-  "Action",
+  "Status",
 ];
 
 const options = {
@@ -33,26 +31,17 @@ const TopupTable = () => {
 
   const [value, setValue] = useState(null);
 
-  const orderAction = async (id, action) => {
-    const res = await OrderActionApi(cookie["token"], id, action);
-    if (res == 200) {
-      setData(null);
-      await fetchData();
-    }
-  }
-
   const fetchData = async () => {
-    const res = await getPendingOrderApi(cookie["token"]);
+    const res = await getOrderHistoryApi(cookie["token"]);
     console.log(res);
     let data = [];
-    let sr_in = 1;
-    res.map((r, index) => {
+    let sr = 1;
+    res.map((r) => {
       let datetime = r.createdAt;
       let [date, time] = datetime.split("T");
       setTotal((total += +r.credit));
-      let sr = sr_in
       data.push([
-        sr,
+        sr++,
         r.user.user_id,
         r.user.username,
         r.user.contact,
@@ -61,16 +50,12 @@ const TopupTable = () => {
         r.amount,
         `${date} ${time.slice(0, 8)}`,
         r.user.state,
-        <div key={r.user.user_id} className="flex gap-2">
-          <div className="border border-gray-600 cursor-pointer" onClick={() => orderAction(r._id, "approve")}>
-            <DoneIcon color="success" />
-          </div>
-          <div className="border border-gray-600 cursor-pointer" onClick={() => orderAction(r._id, "deny")}>
+        r.action === "approve" ? (
+          <DoneIcon color="success" />
+        ) : (
           <CloseIcon color="error" />
-          </div>
-        </div>,  
+        ),
       ]);
-      sr_in++;
     });
     setData(data);
   };
@@ -79,7 +64,9 @@ const TopupTable = () => {
     fetchData();
   }, []);
 
-
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
   return (
     <div>
       {data ? (

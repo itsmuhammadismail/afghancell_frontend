@@ -3,25 +3,25 @@ import route from "./route";
 const registerApi = async (
   token,
   id,
+  displayname,
   username,
-  phone,
-  password,
-  amount,
+  contact,
   country,
-  role
+  state,
+  password
 ) => {
   let header = {
     Authorization: `Bearer ${token}`,
   };
 
   var urlencoded = new URLSearchParams();
+  urlencoded.append("displayname", displayname);
   urlencoded.append("username", username);
-  urlencoded.append("phone_number", phone);
-  urlencoded.append("password", password);
-  urlencoded.append("amount", amount);
+  urlencoded.append("contact", contact);
   urlencoded.append("country", country);
-  urlencoded.append("role", role);
-  urlencoded.append("user_id", id);
+  urlencoded.append("state", state);
+  urlencoded.append("password", password);
+  urlencoded.append("id", id);
 
   var requestOptions = {
     method: "POST",
