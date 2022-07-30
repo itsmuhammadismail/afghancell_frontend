@@ -103,12 +103,12 @@ const OrdersTable = () => {
             promise = play.apply(audio, args);
         if (promise !== undefined) {
           promise.catch(_ => {
-            // Autoplay was prevented. This is optional, but add a button to start playing.
-            var el = document.createElement("button");
-            el.style.display = "none";
-            el.innerHTML = "Play";
-            el.addEventListener("click", function(){play.apply(audio, args);});
-            this.parentNode.insertBefore(el, this.nextSibling)
+            // // Autoplay was prevented. This is optional, but add a button to start playing.
+            // var el = document.createElement("button");
+            // el.style.display = "none";
+            // el.innerHTML = "Play";
+            // el.addEventListener("click", function(){play.apply(audio, args);});
+            // this.parentNode.insertBefore(el, this.nextSibling)
           });
         }
       };
