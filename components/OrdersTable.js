@@ -4,10 +4,10 @@ import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 import { useCookies } from "react-cookie";
 import { useEffect, useState } from "react";
-import getOrderHistoryApi from "../api/get_order_history";
 import { CircularProgress } from "@mui/material";
 import getPendingOrderApi from "../api/get_pending_order";
 import OrderActionApi from "../api/order_action";
+import { useRef } from "react";
 
 const columns = [
   "Sr.No",
@@ -26,18 +26,27 @@ const options = {
   filterType: "checkbox",
 };
 
+let dataArray = [];
+
+function arrayEquals(a, b) {
+  return Array.isArray(a) &&
+      Array.isArray(b) &&
+      a.length === b.length;
+}
+
 const OrdersTable = () => {
   const [data, setData] = useState(null);
   const [cookie] = useCookies(["token"]);
   const [total, setTotal] = useState(0);
 
   const [value, setValue] = useState(null);
+  const audioRef = useRef();
 
   const orderAction = async (id, action) => {
     const res = await OrderActionApi(cookie["token"], id, action);
     if (res == 200) {
       setData(null);
-      await fetchData();
+      await changeData();
     }
   }
 
@@ -72,12 +81,41 @@ const OrdersTable = () => {
       sr_in++;
     });
     
-    setData(fetchedData);
+    return fetchedData;
   };
 
+  const changeData = async () => {
+    let oldData = dataArray;
+    let newData = await fetchData();
+    console.log(newData);
+    dataArray = newData;
+    setData(newData);
+    if(!arrayEquals(oldData, newData)){
+      audioRef.current.play();
+    }      
+  }
+
   useEffect(() => {
+    Audio.prototype.play = (function(play) {
+      return function () {
+        var audio = this,
+            args = arguments,
+            promise = play.apply(audio, args);
+        if (promise !== undefined) {
+          promise.catch(_ => {
+            // Autoplay was prevented. This is optional, but add a button to start playing.
+            var el = document.createElement("button");
+            el.style.display = "none";
+            el.innerHTML = "Play";
+            el.addEventListener("click", function(){play.apply(audio, args);});
+            this.parentNode.insertBefore(el, this.nextSibling)
+          });
+        }
+      };
+      })(Audio.prototype.play);
+
     const interval = setInterval(() => {
-      fetchData();
+      changeData();
     }, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -85,6 +123,7 @@ const OrdersTable = () => {
 
   return (
     <div>
+      <audio ref={audioRef} src="/sound/iphone_sound.mp3" type="audio/mpeg" autoPlay={true} />
       {data ? (
         <MUIDataTable
           title={"Orders List"}
