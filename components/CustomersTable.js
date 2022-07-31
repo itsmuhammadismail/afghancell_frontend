@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import getUsersApi from "../api/get_users";
 import { CircularProgress } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+import deleteUserApi from "../api/delete_user";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 const columns = [
   "Sr.No",
@@ -12,16 +16,8 @@ const columns = [
   "User Type",
   "Wallet",
   "State",
+  "Action",
 ];
-
-// const data = [
-//   ["1", "AFG4567", "ZAINUDDIN", "+923118976543", "Destributor", "200", "Sindh"],
-//   ["1", "AFG4567", "ZAINUDDIN", "+923118976543", "Destributor", "200", "Sindh"],
-//   ["1", "AFG4567", "ZAINUDDIN", "+923118976543", "Destributor", "200", "Sindh"],
-//   ["1", "AFG4567", "ZAINUDDIN", "+923118976543", "Destributor", "200", "Sindh"],
-//   ["1", "AFG4567", "ZAINUDDIN", "+923118976543", "Destributor", "200", "Sindh"],
-//   ["1", "AFG4567", "ZAINUDDIN", "+923118976543", "Destributor", "200", "Sindh"],
-// ];
 
 const options = {
   filterType: "checkbox",
@@ -30,6 +26,22 @@ const options = {
 const CustomersTable = () => {
   const [data, setData] = useState(null);
   const [cookie] = useCookies(["token"]);
+  const MySwal = withReactContent(Swal);
+
+  const deleteUser = async (id) => {
+    console.log(id);
+    await MySwal.fire({
+      title: "Are you sure? you want to delete this user",
+      icon: 'question',
+      showCancelButton: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const res = await deleteUserApi(cookie["token"], id);
+        await fetchData();
+      } 
+    });
+    
+  }
 
   const fetchData = async () => {
     const res = await getUsersApi(cookie["token"]);
@@ -46,6 +58,7 @@ const CustomersTable = () => {
         r.role,
         r.amount,
         r.state,
+        <CloseIcon className="cursor-pointer" key={r.user_id} onClick={() => deleteUser(r._id)} />
       ]);
     });
     setData(data);
